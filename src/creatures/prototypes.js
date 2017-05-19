@@ -1,20 +1,8 @@
-import { forEach } from 'lodash';
-import paper, { Path, Point } from 'paper';
+import { Path } from 'paper';
 
 export {
-    alive,
     display,
     movement
-}
-
-function alive(tank) {
-    paper.view.onFrame = function (e) {
-        forEach(tank, creature => {
-            if (creature.movement) {
-                creature.movement();
-            }
-        });
-    }
 }
 
 function display(props, spec) {
@@ -26,8 +14,6 @@ function display(props, spec) {
     });
 }
 
-function movement(props) {
-    return () => {
-        props.body.position = props.position;
-    }
+function movement(creature, tank) {
+    creature.body.position = creature.position;
 }

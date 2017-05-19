@@ -16,7 +16,9 @@ export default function () {
             })
         }
         const proto = {
-            movement: movement(props)
+            behavior: [
+                movement
+            ]
         }
         return create(proto, props);
     }
