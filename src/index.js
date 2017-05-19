@@ -1,5 +1,5 @@
 import paper from 'paper';
-import { populator } from './utils';
+import { populator } from './utils/utils';
 import createTank from './tank';
 import createPlankter from './creatures/plankter';
 import createPredator from './creatures/predator';

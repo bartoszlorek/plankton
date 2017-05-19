@@ -1,28 +1,36 @@
 import { create, forEach } from 'lodash';
 import paper from 'paper';
 
+const FPS = 60 / 60;
+
 export default function () {
-    const array = [];
+    const content = [];
+    const actions = [];
+
     const props = {
-        array
+        content,
+        actions
     }
     const proto = {
-        each: each(array),
-        radius: radius(array),
+        each: each(content),
+        prepare: prepare(actions),
+        radius: radius(content),
         alive
     }
     return create(proto, props);
 }
 
-function each(array) {
-    return callback => {
-        forEach(array, entity => callback(entity));
-    }
+function each(content) {
+    return callback => forEach(content, entity => callback(entity));
 }
 
-function radius(array) {
+function prepare(actions) {
+    return callback => actions.push(callback);
+}
+
+function radius(content) {
     return (point, value) => {
-        return array.filter(entity => {
+        return content.filter(entity => {
             let { position } = entity;
             if (position === point) {
                 return false;
@@ -34,14 +42,31 @@ function radius(array) {
 
 function alive() {
     const tank = this;
-    paper.view.onFrame = function (e) {
+    const { actions } = tank;
+    const data = {};
+
+    paper.view.on('frame', frame => {
+        if (!validFrame(frame)) {
+            return;
+        }
+        if (actions.length) {
+            forEach(actions, action => {
+                action(data);
+            });
+        }
         tank.each(entity => {
             if (entity.behavior) {
-                // pre-behavior actions here
                 forEach(entity.behavior, behavior => {
-                    behavior(entity, tank);
+                    behavior(entity, tank, frame, data);
                 });
             }
-        })
+        });
+    });
+}
+
+function validFrame(frame) {
+    if (FPS <= 1) {
+        return true;
     }
+    return frame.count % FPS === 0;
 }

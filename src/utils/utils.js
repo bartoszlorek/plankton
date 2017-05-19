@@ -1,10 +1,12 @@
 import { random } from 'lodash';
 import paper, { Point } from 'paper';
+import math from 'mathjs';
 
 export {
     populator,
     getPosition,
-    randomPosition
+    randomPosition,
+    eachTime
 }
 
 function populator(tank) {
@@ -12,12 +14,12 @@ function populator(tank) {
         if (typeof creature !== 'function') {
             throw 'creature must be a function';
         }
-        const { array } = tank;
+        const { content } = tank;
         while (quantity) {
             let entity = creature({
                 position: randomPosition()
             });
-            array.push(entity);
+            content.push(entity);
             quantity -= 1;
         }
     }
@@ -33,4 +35,11 @@ function randomPosition() {
     return new Point(
         random(0, width),
         random(0, height));
+}
+
+function eachTime(frame, seconds, callback) {
+    let time = math.round(frame.time, 1);
+    if (time % seconds === 0) {
+        callback();
+    }
 }

@@ -1,5 +1,5 @@
 import { create } from 'lodash';
-import { getPosition } from '../utils';
+import { getPosition } from '../utils/utils';
 import { movement, display } from './prototypes';
 
 export default function () {

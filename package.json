@@ -21,6 +21,7 @@
   "homepage": "https://github.com/ubery/plankton#readme",
   "dependencies": {
     "lodash": "^4.17.4",
+    "mathjs": "^3.13.1",
     "paper": "^0.11.3"
   },
   "devDependencies": {
