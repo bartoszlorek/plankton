@@ -12,11 +12,12 @@ function populator(tank) {
         if (typeof creature !== 'function') {
             throw 'creature must be a function';
         }
+        const { array } = tank;
         while (quantity) {
             let entity = creature({
                 position: randomPosition()
             });
-            tank.push(entity);
+            array.push(entity);
             quantity -= 1;
         }
     }
