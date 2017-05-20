@@ -1,4 +1,4 @@
-import { create, forEach } from 'lodash';
+import { create, forEach, sortBy } from 'lodash';
 import paper from 'paper';
 
 const FPS = 60 / 60;
@@ -12,10 +12,16 @@ export default function () {
         actions
     }
     const proto = {
+        alive,
         each: each(content),
         prepare: prepare(actions),
         radius: radius(content),
-        alive
+        get width() {
+            return paper.view.size.width;
+        },
+        get height() {
+            return paper.view.size.height;
+        }
     }
     return create(proto, props);
 }
@@ -29,14 +35,20 @@ function prepare(actions) {
 }
 
 function radius(content) {
-    return (point, value) => {
-        return content.filter(entity => {
-            let { position } = entity;
-            if (position === point) {
-                return false;
+    return (entity, value) => {
+        const position = entity.position;
+        const closest = [];
+        forEach(content, next => {
+            if (entity !== next) {
+                let dist = position.getDistance(next.position);
+                if (dist < value) {
+                    closest.push([dist, next]);
+                }
             }
-            return position.getDistance(point) < value;
-        })
+        });
+        return closest
+            .sort((a, b) => a[0] - b[0])
+            .map(item => item[1]);
     }
 }
 
