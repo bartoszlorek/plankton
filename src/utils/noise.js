@@ -1,28 +1,34 @@
-// based on code from from scratchapixel.com, via Michael Bromley
+const TABLE_SIZE = 255;
+let table;
 
-const PERLIN_SIZE = 255;
-let perlin;
+noise.generate = generate;
 
-export default function (value, scale) {
-    if (perlin === undefined) {
+export default function noise(value, scale, shift) {
+    if (table === undefined) {
         generate();
     }
-    const scaled = value * (scale || 1);
+    scale = scale || 1;
+    shift = shift || 0;
+
+    const scaled = value * scale + shift;
     const floor = Math.floor(scaled);
     const t = scaled - floor;
     const tRemapSmoothstep = t * t * (3 - 2 * t);
+    const min = floor % TABLE_SIZE;
+    const max = (min + 1) % TABLE_SIZE;
 
-    const min = floor % PERLIN_SIZE;
-    const max = (min + 1) % PERLIN_SIZE;
-
-    return lerp(perlin[min], perlin[max], tRemapSmoothstep);
+    return lerp(
+        table[min],
+        table[max],
+        tRemapSmoothstep
+    );
 }
 
 function generate() {
-    perlin = [];
-    let length = PERLIN_SIZE + 1;
+    table = [];
+    let length = TABLE_SIZE + 1;
     while (length--) {
-        perlin.push(Math.random());
+        table.push(Math.random());
     }
 }
 
