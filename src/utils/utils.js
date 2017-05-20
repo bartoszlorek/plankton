@@ -1,4 +1,4 @@
-import { random } from 'lodash';
+import { random, forEach, isObject } from 'lodash';
 import paper, { Point } from 'paper';
 import math from 'mathjs';
 
@@ -6,7 +6,9 @@ export {
     populator,
     getPosition,
     randomPosition,
-    eachTime
+    eachTime,
+    limit,
+    define
 }
 
 function populator(tank) {
@@ -42,4 +44,44 @@ function eachTime(frame, seconds, callback) {
     if (time % seconds === 0) {
         callback();
     }
+}
+
+function limit(point, value) {
+    if (point.length > value) {
+        return point.normalize(value);
+    }
+    return point;
+}
+
+function define(object, props) {
+    forEach(props, (prop, name) => {
+        if (! isDescriptor(prop)) {
+            prop = { value: prop };
+        }
+        Object.defineProperty(object, name, prop);
+    });
+}
+
+const descriptorsKeys = [
+    'set',
+    'get',
+    'enumerable',
+    'writable',
+    'configurable'
+];
+
+function isDescriptor(value) {
+    if (isObject(value)) {
+        const keys = Object.keys(value);
+        const length = keys.length;
+        let i = 0;
+
+        while (i < length) {
+            if (descriptorsKeys.indexOf(keys[i]) !== -1) {
+                return true;
+            }
+            i += 1;
+        }
+    }
+    return false;
 }
