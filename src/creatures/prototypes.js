@@ -1,10 +1,11 @@
-import paper, { Path } from 'paper';
-import { eachTime } from '../utils/utils';
-import noise from '../utils/noise';
+import { Path, Point } from 'paper';
+import { limit } from '../utils/utils';
 
 export {
     display,
-    movement
+    physics,
+    applyForce,
+    seek
 }
 
 function display(props, spec) {
@@ -16,9 +17,23 @@ function display(props, spec) {
     });
 }
 
-function movement(creature, tank, frame, data) {
-    const x = creature.id * 50;
-    const y = noise(creature.id) * 100 + paper.view.size.height / 2;
-    creature.body.position.set(x, y);
-    //creature.body.position = creature.position;
+function physics(spec) {
+    let { maxSpeed, maxForce } = spec;
+    return {
+        maxSpeed: maxSpeed || 3,
+        maxForce: maxForce || 0.5,
+        acceleration: new Point(0,0),
+        velocity: new Point(0,0)
+    }
+}
+
+function applyForce(force) {
+    this.acceleration = this.acceleration.add(force);
+}
+
+function seek(target) {
+    const { position, velocity, maxSpeed, maxForce } = this;
+    const desired = target.subtract(position).normalize(maxSpeed);
+    const steer = desired.subtract(velocity);
+    return limit(steer, maxForce);
 }
