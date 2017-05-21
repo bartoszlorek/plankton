@@ -1,17 +1,19 @@
 import { create } from 'lodash';
 import { getPosition } from '../utils/utils';
-import { display, physics, applyForce, seek } from './prototypes';
-import { movement, seekMouse } from './behavior';
+import { body, physics, applyForce, updateForce, seek } from '../basis/prototypes';
+import { observe, separate, seekMouse } from '../basis/behavior';
 
 export default function () {
     let id = -1;
 
     const proto = {
-        seek,
         applyForce,
+        updateForce,
+        seek,
         behavior: [
-            seekMouse,
-            movement
+            observe,
+            separate,
+            seekMouse
         ],
         set position(point) {
             this.body.position = point;
@@ -24,17 +26,16 @@ export default function () {
     return (spec) => {
         const props = {
             id: (id += 1),
-            type: 'predator',
-            body: display(props, {
-                fillColor: '#e0244d',
-                radius: 24
-            })
+            type: 'predator'
         }
-        Object.assign(props, physics({
+        body(props, {
+            fillColor: '#e0244d',
+            radius: 24
+        });
+        physics(props, {
             maxForce: .5,
             maxSpeed: 7
-        }));
-
+        });
         const entity = create(proto, props);
         entity.position = getPosition(spec);
         return entity;

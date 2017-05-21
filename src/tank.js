@@ -5,16 +5,12 @@ const FPS = 60 / 60;
 
 export default function () {
     const content = [];
-    const actions = [];
-
     const props = {
-        content,
-        actions
+        content
     }
     const proto = {
         alive,
         each: each(content),
-        prepare: prepare(actions),
         radius: radius(content),
         get width() {
             return paper.view.size.width;
@@ -28,10 +24,6 @@ export default function () {
 
 function each(content) {
     return callback => forEach(content, entity => callback(entity));
-}
-
-function prepare(actions) {
-    return callback => actions.push(callback);
 }
 
 function radius(content) {
@@ -54,31 +46,25 @@ function radius(content) {
 
 function alive() {
     const tank = this;
-    const { actions } = tank;
-    const data = {};
-
     paper.view.on('frame', frame => {
         if (!validFrame(frame)) {
             return;
         }
-        if (actions.length) {
-            forEach(actions, action => {
-                action(data);
-            });
-        }
         tank.each(entity => {
             if (entity.behavior) {
+                let data = {};
                 forEach(entity.behavior, behavior => {
-                    behavior(entity, tank, frame, data);
+                    behavior(entity, tank, data, frame);
                 });
+                data = null;
+            }
+            if (entity.updateForce) {
+                entity.updateForce();
             }
         });
     });
 }
 
 function validFrame(frame) {
-    if (FPS <= 1) {
-        return true;
-    }
-    return frame.count % FPS === 0;
+    return FPS <= 1 || frame.count % FPS === 0;
 }

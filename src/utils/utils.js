@@ -8,6 +8,7 @@ export {
     randomPosition,
     eachTime,
     limit,
+    mapRange,
     define
 }
 
@@ -51,6 +52,10 @@ function limit(point, value) {
         return point.normalize(value);
     }
     return point;
+}
+
+function mapRange(value, inMin, inMax, outMin = 0, outMax = 1) {
+    return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
 }
 
 function define(object, props) {
