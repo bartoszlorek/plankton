@@ -1,5 +1,6 @@
 import { create, forEach, sortBy } from 'lodash';
 import paper from 'paper';
+import createGrid from './utils/grid';
 
 const FPS = 60 / 60;
 
@@ -46,15 +47,24 @@ function radius(content) {
 
 function alive() {
     const tank = this;
+    const grid = createGrid(100);
+    const { content } = tank;
+
     paper.view.on('frame', frame => {
         if (!validFrame(frame)) {
             return;
         }
+        // pre-behaviour actions
+        //grid.assign(content);
+
+        // entities behaviour
         tank.each(entity => {
-            if (entity.behavior) {
-                let data = {};
-                forEach(entity.behavior, behavior => {
-                    behavior(entity, tank, data, frame);
+            if (entity.behaviour) {
+                let data = {
+                    //group: grid.get(entity.group)
+                }
+                forEach(entity.behaviour, behaviour => {
+                    behaviour(entity, tank, data, frame);
                 });
                 data = null;
             }

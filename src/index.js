@@ -11,6 +11,6 @@ const populate = populator(tank);
 const plankter = createPlankter();
 const predator = createPredator();
 
-populate(plankter, 20);
+populate(plankter, 30);
 populate(predator, 5);
 tank.alive();

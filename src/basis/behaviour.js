@@ -15,6 +15,7 @@ tool.onMouseMove = function(e) {
 }
 
 function observe(entity, tank, data) {
+    //data.closest = data.group.filter(item => item !== entity);
     data.closest = tank.radius(entity, 50);
 }
 
@@ -43,11 +44,11 @@ function separate(entity, tank, data) {
             .normalize(maxSpeed)
             .subtract(velocity),
             maxForce);
-        entity.applyForce(steer, 2);
+        entity.applyForce(steer, 1.5);
     }
 }
 
 function seekMouse(entity, tank, data) {
     const toMouse = entity.seek(mousePoint);
-    entity.applyForce(toMouse, 1);
+    entity.applyForce(toMouse, .1);
 }

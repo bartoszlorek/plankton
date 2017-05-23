@@ -1,7 +1,7 @@
 import { create } from 'lodash';
 import { getPosition } from '../utils/utils';
 import { body, physics, applyForce, updateForce, seek } from '../basis/prototypes';
-import { observe, separate, seekMouse } from '../basis/behavior';
+import { observe, separate, seekMouse } from '../basis/behaviour';
 
 export default function () {
     let id = -1;
@@ -10,7 +10,7 @@ export default function () {
         applyForce,
         updateForce,
         seek,
-        behavior: [
+        behaviour: [
             observe,
             separate,
             seekMouse
