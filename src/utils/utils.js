@@ -1,15 +1,11 @@
-import { random, forEach, isObject } from 'lodash';
-import paper, { Point } from 'paper';
+import Vector from './vector.min';
 import math from 'mathjs';
 
 export {
     populator,
     getPosition,
-    randomPosition,
     eachTime,
-    limit,
-    mapRange,
-    define
+    mapRange
 }
 
 function populator(tank) {
@@ -17,12 +13,13 @@ function populator(tank) {
         if (typeof creature !== 'function') {
             throw 'creature must be a function';
         }
-        const { content } = tank;
+        const { width, height } = tank;
         while (quantity) {
             let entity = creature({
-                position: randomPosition()
+                position: Vector.random(width, height)
             });
-            content.push(entity);
+            console.log( entity )
+            tank.add(entity);
             quantity -= 1;
         }
     }
@@ -30,14 +27,7 @@ function populator(tank) {
 
 function getPosition(spec) {
     const { position, x, y } = spec;
-    return position || new Point(x, y);
-}
-
-function randomPosition() {
-    const { width, height } = paper.view.size;
-    return new Point(
-        random(0, width),
-        random(0, height));
+    return position || new Vector(x, y);
 }
 
 function eachTime(frame, seconds, callback) {
@@ -47,46 +37,6 @@ function eachTime(frame, seconds, callback) {
     }
 }
 
-function limit(point, value) {
-    if (point.length > value) {
-        return point.normalize(value);
-    }
-    return point;
-}
-
 function mapRange(value, inMin, inMax, outMin = 0, outMax = 1) {
     return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
-}
-
-function define(object, props) {
-    forEach(props, (prop, name) => {
-        if (! isDescriptor(prop)) {
-            prop = { value: prop };
-        }
-        Object.defineProperty(object, name, prop);
-    });
-}
-
-const descriptorsKeys = [
-    'set',
-    'get',
-    'enumerable',
-    'writable',
-    'configurable'
-];
-
-function isDescriptor(value) {
-    if (isObject(value)) {
-        const keys = Object.keys(value);
-        const length = keys.length;
-        let i = 0;
-
-        while (i < length) {
-            if (descriptorsKeys.indexOf(keys[i]) !== -1) {
-                return true;
-            }
-            i += 1;
-        }
-    }
-    return false;
 }

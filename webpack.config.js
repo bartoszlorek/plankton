@@ -18,10 +18,5 @@ module.exports = {
                 loaders: ['babel-loader']
             }
         ]
-    },
-    resolve: {
-        alias: {
-            'paper': 'paper/dist/paper-core.js',
-        }
     }
 }

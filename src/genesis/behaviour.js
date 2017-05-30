@@ -1,6 +1,5 @@
+import Vector from '../utils/vector.min';
 import { forEach } from 'lodash';
-import { Point, Tool } from 'paper';
-import { limit } from '../utils/utils';
 
 export {
     observe,
@@ -8,22 +7,21 @@ export {
     seekMouse
 }
 
-const tool = new Tool();
-let mousePoint = new Point(0,0);
-tool.onMouseMove = function(e) {
-    mousePoint = e.point;
+const mousePoint = new Vector(0, 0);
+document.onmousemove = function (e) {
+    mousePoint.set(e.pageX, e.pageY);
 }
 
 function observe(entity, tank, data) {
     //data.closest = data.group.filter(item => item !== entity);
-    data.closest = tank.radius(entity, 50);
+    //data.closest = tank.radius(entity, 50);
 }
 
 function separate(entity, tank, data) {
     const { position } = entity;
     const { closest } = data;
     const radius = entity.radius * 2;
-    let sum = new Point(0, 0);
+    let sum = new Vector(0, 0);
     let count = 0;
 
     forEach(closest, item => {
