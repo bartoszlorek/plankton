@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/ubery/plankton#readme",
   "dependencies": {
+    "gl-matrix": "^2.3.2",
     "lodash": "^4.17.4",
     "mathjs": "^3.13.1",
     "pixi.js": "^4.5.2"

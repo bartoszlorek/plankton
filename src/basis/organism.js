@@ -1,6 +1,8 @@
 import Vector from '../utils/vector.min';
 import { create, defaults } from 'lodash';
 import { mapRange, createShape } from '../utils/utils';
+import { vec2 } from 'gl-matrix';
+import pool from '../utils/pool';
 
 export default function (proto) {
     let id = -1;
@@ -9,7 +11,7 @@ export default function (proto) {
         updateForce,
         display,
         borders,
-        seek
+        //seek
     });
 
     return (props) => {
@@ -18,8 +20,8 @@ export default function (proto) {
                 props.radius,
                 props.color
             ),
-            acceleration: new Vector(0, 0),
-            velocity: new Vector(0, 0),
+            acceleration: vec2.create(),
+            velocity: vec2.create(),
             maxSpeed: 3,
             maxForce: 0.5,
             id: (id += 1)
@@ -29,27 +31,28 @@ export default function (proto) {
 }
 
 function applyForce(force, weight) {
-    if (weight !== undefined) {
-        force.multiply(weight);
-    }
-    this.acceleration.add(force);
+    vec2.scale(force, force, weight || 1)
+    vec2.addTo(this.acceleration, force);
 }
 
 function updateForce() {
-    this.velocity
-        .add(this.acceleration)
-        .limit(this.maxSpeed);
-    this.position.add(this.velocity);
-    this.acceleration.set(0, 0);
+    vec2.addTo(this.velocity, this.acceleration);
+    vec2.limit(this.acceleration, this.maxSpeed);
+    vec2.addTo(this.position, this.velocity);
+    vec2.set(this.acceleration, 0, 0);
 }
 
 function display() {
-    const { x, y } = this.position;
-    this.shape.position.set(x, y);
+    // set pixi.js
+    this.shape.position.set(
+        this.position[0],
+        this.position[1]
+    ); 
 }
 
 function borders(tank) {
-    const { x, y } = this.position;
+    const x = this.position[0];
+    const y = this.position[1];
     const { radius } = this;
     const { width, height } = tank;
     let fx, fy;
@@ -65,23 +68,25 @@ function borders(tank) {
         fy = -(1 - ((height - y) / radius));
     }
     if (fx !== undefined || fy !== undefined) {
-        const force = new Vector(fx || 0, fy || 0);
+        const force = pool.pick();
+        vec2.set(force, fx || 0, fy || 0);
         this.applyForce(force);
+        pool.free(force);
     }
 }
 
-function seek(target, reduce = true) {
-    const steer = target
-        .isubtract(this.position)
-        .normalize(this.maxSpeed)
-        .subtract(this.velocity);
+// function seek(target, reduce = true) {
+//     const steer = target
+//         .isubtract(this.position)
+//         .normalize(this.maxSpeed)
+//         .subtract(this.velocity);
 
-    if (reduce) {
-        const dist = this.position.distanceSqr(target);
-        if (dist < 1000) {
-            const limiter = mapRange(dist, 0, 1000);
-            steer.multiply(limiter);
-        }
-    }
-    return steer.limit(this.maxForce);
-}
+//     if (reduce) {
+//         const dist = this.position.distanceSqr(target);
+//         if (dist < 1000) {
+//             const limiter = mapRange(dist, 0, 1000);
+//             steer.multiply(limiter);
+//         }
+//     }
+//     return steer.limit(this.maxForce);
+// }

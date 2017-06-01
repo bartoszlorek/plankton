@@ -1,11 +1,11 @@
 import Vector from './vector.min';
 import math from 'mathjs';
 import { Graphics } from 'pixi.js';
+import { vec2 } from 'gl-matrix';
 
 export {
     populator,
     createShape,
-    getPosition,
     eachTime,
     mapRange
 }
@@ -18,7 +18,7 @@ function populator(tank) {
         const { width, height } = tank;
         while (quantity) {
             let entity = creature({
-                position: Vector.random(width, height)
+                position: vec2.randomIn(vec2.create(), width, height)
             });
             tank.add(entity);
             quantity -= 1;
@@ -32,11 +32,6 @@ function createShape(radius, color) {
     shape.drawCircle(0, 0, radius);
     shape.endFill();
     return shape;
-}
-
-function getPosition(spec) {
-    const { position, x, y } = spec;
-    return position || new Vector(x, y);
 }
 
 function eachTime(frame, seconds, callback) {

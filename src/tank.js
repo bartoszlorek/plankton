@@ -1,4 +1,5 @@
 import { create, forEach, remove } from 'lodash';
+import { vec2 } from 'gl-matrix';
 
 export default function (engine) {
     const { stage, view } = engine;
@@ -54,7 +55,7 @@ function radius(content) {
         value = value * value;
         forEach(content, next => {
             if (entity !== next) {
-                let dist = position.distanceSqr(next.position);
+                let dist = vec2.sqrDist(position, next.position);
                 if (dist < value) {
                     closest.push([dist, next]);
                 }

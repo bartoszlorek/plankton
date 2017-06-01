@@ -1,3 +1,4 @@
+import './utils/glextend';
 import { populator } from './utils/utils';
 import engine from './engine';
 import createTank from './tank';
@@ -9,7 +10,7 @@ const populate = populator(tank);
 const plankter = createPlankter();
 // const predator = createPredator();
 
-populate(plankter, 300);
+populate(plankter, 500);
 // populate(predator, 5);
 
 engine.ticker.add(() => {
