@@ -5,7 +5,6 @@ import { Graphics } from 'pixi.js';
 export {
     populator,
     createShape,
-    getPosition,
     eachTime,
     mapRange
 }
@@ -32,11 +31,6 @@ function createShape(radius, color) {
     shape.drawCircle(0, 0, radius);
     shape.endFill();
     return shape;
-}
-
-function getPosition(spec) {
-    const { position, x, y } = spec;
-    return position || new Vector(x, y);
 }
 
 function eachTime(frame, seconds, callback) {

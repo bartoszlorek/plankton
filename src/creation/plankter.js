@@ -1,4 +1,3 @@
-import { getPosition } from '../utils/utils';
 import { observe, separate, seekMouse } from '../basis/behaviour';
 import organism from '../basis/organism';
 

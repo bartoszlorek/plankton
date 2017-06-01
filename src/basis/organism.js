@@ -1,5 +1,4 @@
 import Vector from '../utils/vector.min';
-import pool from '../utils/pool';
 import { create, defaults } from 'lodash';
 import { mapRange, createShape } from '../utils/utils';
 
@@ -53,7 +52,8 @@ function borders(tank) {
     const { x, y } = this.position;
     const { radius } = this;
     const { width, height } = tank;
-    let fx, fy;
+    let fx = 0,
+        fy = 0;
 
     if (x < radius) {
         fx = 1 - (x / radius);
@@ -65,11 +65,10 @@ function borders(tank) {
     } else if (y > height - radius) {
         fy = -(1 - ((height - y) / radius));
     }
-    if (fx !== undefined || fy !== undefined) {
-        const force = pool.pick();
-        force.set(fx || 0, fy || 0)
+    if (fx !== 0 || fy !== 0) {
+        const force = Vector.receive(fx, fy);
         this.applyForce(force);
-        pool.free(force);
+        Vector.release(force);
     }
 }
 
@@ -80,7 +79,7 @@ function seek(target, reduce = true) {
         .subtract(this.velocity);
 
     if (reduce) {
-        const dist = this.position.distanceSqr(target);
+        const dist = this.position.distanceSq(target);
         if (dist < 1000) {
             const limiter = mapRange(dist, 0, 1000);
             steer.multiply(limiter);

@@ -54,7 +54,7 @@ function radius(content) {
         value = value * value;
         forEach(content, next => {
             if (entity !== next) {
-                let dist = position.distanceSqr(next.position);
+                let dist = position.distanceSq(next.position);
                 if (dist < value) {
                     closest.push([dist, next]);
                 }
