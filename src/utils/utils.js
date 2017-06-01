@@ -1,8 +1,10 @@
 import Vector from './vector.min';
 import math from 'mathjs';
+import { Graphics } from 'pixi.js';
 
 export {
     populator,
+    createShape,
     getPosition,
     eachTime,
     mapRange
@@ -18,11 +20,18 @@ function populator(tank) {
             let entity = creature({
                 position: Vector.random(width, height)
             });
-            console.log( entity )
             tank.add(entity);
             quantity -= 1;
         }
     }
+}
+
+function createShape(radius, color) {
+    const shape = new Graphics();
+    shape.beginFill(color);
+    shape.drawCircle(0, 0, radius);
+    shape.endFill();
+    return shape;
 }
 
 function getPosition(spec) {

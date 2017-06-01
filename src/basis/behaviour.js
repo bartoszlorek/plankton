@@ -13,36 +13,34 @@ document.onmousemove = function (e) {
 }
 
 function observe(entity, tank, data) {
-    //data.closest = data.group.filter(item => item !== entity);
-    //data.closest = tank.radius(entity, 50);
+    data.closest = tank.radius(entity, 50);
 }
 
 function separate(entity, tank, data) {
-    const { position } = entity;
-    const { closest } = data;
-    const radius = entity.radius * 2;
-    let sum = new Vector(0, 0);
+    const { position, radius } = entity;
+    const diameterSq = radius * radius * 2;
+    const sum = new Vector(0, 0);
     let count = 0;
 
-    forEach(closest, item => {
-        let dist = position.getDistance(item.position);
-        if (dist > 0 && dist < radius) {
+    forEach(data.closest, item => {
+        let dist = position.distanceSqr(item.position);
+        if (dist < diameterSq) {
             let diff = position
-                .subtract(item.position)
+                .isubtract(item.position)
                 .normalize()
                 .divide(dist);
-            sum = sum.add(diff);
+            sum.add(diff);
             count++;
         }
     });
     if (count > 0) {
-        const { velocity, maxSpeed, maxForce } = entity.physics;
-        const steer = limit(sum
+        const { velocity, maxSpeed, maxForce } = entity;
+        const steer = sum
             .divide(count)
             .normalize(maxSpeed)
-            .subtract(velocity),
-            maxForce);
-        entity.applyForce(steer, 1.5);
+            .subtract(velocity)
+            .limit(maxForce);
+        entity.applyForce(steer);
     }
 }
 

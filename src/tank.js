@@ -3,7 +3,6 @@ import { create, forEach, remove } from 'lodash';
 export default function (engine) {
     const { stage, view } = engine;
     const content = [];
-
     const props = {
         engine,
         content
@@ -41,9 +40,8 @@ function update() {
             });
             data = null;
         }
-        if (entity.updateForce) {
-            entity.updateForce();
-        }
+        entity.borders(tank);
+        entity.updateForce();
         entity.display();
     });
 }
@@ -52,9 +50,11 @@ function radius(content) {
     return (entity, value) => {
         const position = entity.position;
         const closest = [];
+
+        value = value * value;
         forEach(content, next => {
             if (entity !== next) {
-                let dist = position.distance(next.position);
+                let dist = position.distanceSqr(next.position);
                 if (dist < value) {
                     closest.push([dist, next]);
                 }
