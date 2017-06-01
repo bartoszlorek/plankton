@@ -1,4 +1,5 @@
 import Vector from '../utils/vector.min';
+import pool from '../utils/pool';
 import { create, defaults } from 'lodash';
 import { mapRange, createShape } from '../utils/utils';
 
@@ -65,8 +66,10 @@ function borders(tank) {
         fy = -(1 - ((height - y) / radius));
     }
     if (fx !== undefined || fy !== undefined) {
-        const force = new Vector(fx || 0, fy || 0);
+        const force = pool.pick();
+        force.set(fx || 0, fy || 0)
         this.applyForce(force);
+        pool.free(force);
     }
 }
 

@@ -1,4 +1,5 @@
 import Vector from '../utils/vector.min';
+import pool from '../utils/pool';
 import { forEach } from 'lodash';
 
 export {
@@ -19,17 +20,19 @@ function observe(entity, tank, data) {
 function separate(entity, tank, data) {
     const { position, radius } = entity;
     const diameterSq = radius * radius * 2;
-    const sum = new Vector(0, 0);
+    const sum = pool.pick();
     let count = 0;
 
     forEach(data.closest, item => {
         let dist = position.distanceSqr(item.position);
         if (dist < diameterSq) {
-            let diff = position
-                .isubtract(item.position)
+            const diff = pool.pick();
+            diff.set(position)
+                .subtract(item.position)
                 .normalize()
                 .divide(dist);
             sum.add(diff);
+            pool.free(diff);
             count++;
         }
     });
@@ -42,6 +45,7 @@ function separate(entity, tank, data) {
             .limit(maxForce);
         entity.applyForce(steer);
     }
+    pool.free(sum);
 }
 
 function seekMouse(entity, tank, data) {

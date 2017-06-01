@@ -9,7 +9,7 @@ const populate = populator(tank);
 const plankter = createPlankter();
 // const predator = createPredator();
 
-populate(plankter, 300);
+populate(plankter, 1000);
 // populate(predator, 5);
 
 engine.ticker.add(() => {
