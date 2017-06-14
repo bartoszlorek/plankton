@@ -1,5 +1,7 @@
 import { create, forEach, remove } from 'lodash';
 
+const RADIUS_LIMIT = 50;
+
 export default function (engine) {
     const { stage, view } = engine;
     const content = [];
@@ -57,6 +59,9 @@ function radius(content) {
                 let dist = position.distanceSq(next.position);
                 if (dist < value) {
                     closest.push([dist, next]);
+                    if (closest.length > RADIUS_LIMIT) {
+                        return false;
+                    }
                 }
             }
         });
