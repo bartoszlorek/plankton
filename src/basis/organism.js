@@ -2,16 +2,16 @@ import Vector from '../utils/vector.min';
 import { create, defaults } from 'lodash';
 import { mapRange, createShape } from '../utils/utils';
 
-export default function (proto) {
-    let id = -1;
-    defaults(proto, {
+export default function (_proto) {
+    const proto = Object.assign({
         applyForce,
         updateForce,
         display,
         borders,
         seek
-    });
+    }, _proto);
 
+    let id = -1;
     return (props) => {
         defaults(props, {
             shape: createShape(
@@ -48,6 +48,26 @@ function display() {
     this.shape.position.set(x, y);
 }
 
+function seek(target, range, bias) {
+    const dist = this.position.distanceSq(target);
+    if (dist < range) {
+        let half = range / 2,
+            norm = (half - Math.abs(dist - half)) / half;
+        if (norm < bias) {
+            norm = norm / bias;
+        } else {
+            norm = 1;
+        }
+        return target
+            .isubtract(this.position)
+            .normalize(this.maxSpeed)
+            .subtract(this.velocity)
+            .limit(this.maxForce)
+            .multiply(norm);
+    }
+    return null;
+}
+
 function borders(tank) {
     const { x, y } = this.position;
     const { radius } = this;
@@ -70,20 +90,4 @@ function borders(tank) {
         this.applyForce(force);
         Vector.release(force);
     }
-}
-
-function seek(target, reduce = true) {
-    const steer = target
-        .isubtract(this.position)
-        .normalize(this.maxSpeed)
-        .subtract(this.velocity);
-
-    if (reduce) {
-        const dist = this.position.distanceSq(target);
-        if (dist < 1000) {
-            const limiter = mapRange(dist, 0, 1000);
-            steer.multiply(limiter);
-        }
-    }
-    return steer.limit(this.maxForce);
 }

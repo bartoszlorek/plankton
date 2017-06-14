@@ -1,16 +1,18 @@
-import { observe, separate, seekMouse } from '../basis/behaviour';
+import { observe, separate, align, desireMouse, avoidMouse } from '../basis/behaviour';
 import organism from '../basis/organism';
 
 export default function () {
-    const create = organism({
+    const createOrganism = organism({
         behaviour: [
             observe,
             separate,
-            //seekMouse
+            align,
+            desireMouse,
+            //avoidMouse
         ]
     });
 
-    return (spec) => create({
+    return (spec) => createOrganism({
         position: spec.position,
         type: 'plankter',
         maxForce: .5,

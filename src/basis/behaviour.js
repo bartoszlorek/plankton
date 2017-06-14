@@ -4,7 +4,9 @@ import { forEach } from 'lodash';
 export {
     observe,
     separate,
-    seekMouse
+    align,
+    desireMouse,
+    avoidMouse
 }
 
 const mousePoint = new Vector(0, 0);
@@ -49,7 +51,32 @@ function separate(entity, tank, data) {
     }
 }
 
-function seekMouse(entity, tank, data) {
-    const toMouse = entity.seek(mousePoint);
-    entity.applyForce(toMouse, .1);
+function align(entity, tank, data) {
+    const { closest } = data;
+    if (closest.length > 0) {
+        const steer = Vector.receive();
+        forEach(closest, item => {
+            steer.add(item.velocity);
+        });
+        steer.divide(closest.length)
+            .normalize(entity.maxSpeed)
+            .subtract(entity.velocity)
+            .limit(entity.maxForce);
+        entity.applyForce(steer, .02);
+        Vector.release(steer);
+    }
+}
+
+function desireMouse(entity) {
+    const toMouse = entity.seek(mousePoint, 10000, .25);
+    if (toMouse !== null) {
+        entity.applyForce(toMouse, .25);
+    }
+}
+
+function avoidMouse(entity) {
+    const toMouse = entity.seek(mousePoint, 10000, .25);
+    if (toMouse !== null) {
+        entity.applyForce(toMouse.negate(), .25);
+    }
 }
