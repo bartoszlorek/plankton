@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ubery/plankton.git"
+    "url": "git+https://github.com/bartoszlorek/plankton.git"
   },
   "author": "Bartosz Lorek",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ubery/plankton/issues"
+    "url": "https://github.com/bartoszlorek/plankton/issues"
   },
-  "homepage": "https://github.com/ubery/plankton#readme",
+  "homepage": "https://github.com/bartoszlorek/plankton#readme",
   "dependencies": {
     "lodash": "^4.17.4",
     "mathjs": "^3.13.1",
